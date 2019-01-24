@@ -1,5 +1,5 @@
 # competition-practice-env
 
 <p align="center">
-  <img alt="diagram" src="https://github.com/subfinder/research/blob/master/diagram.png"/>
+  <img alt="diagram" src="https://github.com/picatz/competition-practice-env/blob/master/diagram.png"/>
 <p>
