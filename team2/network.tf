@@ -26,7 +26,7 @@ resource "google_compute_network_peering" "scoring" {
   network = "https://www.googleapis.com/compute/v1/projects/iasa-team-0010/global/networks/team2-network"
   peer_network = "https://www.googleapis.com/compute/v1/projects/iasa-scoring-engine/global/networks/scoring-network"
 
-  depends_on = ["google_compute_network.team2"]
+  depends_on = ["google_compute_network.team2", "google_compute_network_peering.team2"]
 }
 
 resource "google_compute_firewall" "allow_icmp" {

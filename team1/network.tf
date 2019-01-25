@@ -26,7 +26,7 @@ resource "google_compute_network_peering" "scoring" {
   network = "https://www.googleapis.com/compute/v1/projects/iasa-team-0001/global/networks/team1-network"
   peer_network = "https://www.googleapis.com/compute/v1/projects/iasa-scoring-engine/global/networks/scoring-network"
 
-  depends_on = ["google_compute_network.team1"]
+  depends_on = ["google_compute_network.team1", "google_compute_network_peering.team1"]
 }
 
 
