@@ -1,0 +1,36 @@
+{
+    "builders": [
+        {
+            "type": "googlecompute",
+            "account_file": "../account.json",
+            "project_id": "iasa-scoring-engine",
+            "source_image": "ubuntu-1804-bionic-v20181222",
+            "image_description": "i duno",
+            "image_name": "engine",
+            "disk_size": "10",
+            "machine_type": "n1-standard-4",
+            "state_timeout": "15m",
+            "ssh_username": "packer",
+            "zone": "us-east1-b"
+        }
+    ],
+    "provisioners": [
+        {
+            "type": "shell",
+            "inline": [
+                "export DEBIAN_FRONTEND=noninteractive",
+                "sudo apt-get update  -y",
+                "sudo apt-get upgrade -y",
+                "sudo apt autoremove -y",
+                "curl -s https://dl.google.com/cloudagents/install-logging-agent.sh | sudo bash",
+                "sudo apt-get install apt-transport-https ca-certificates curl software-properties-common -y",
+                "curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -",
+                "sudo add-apt-repository \"deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable\"",
+                "sudo apt-get update -y",
+                "sudo apt-get install docker-ce -y",
+                "sudo apt-get install gcc -y",
+                "sudo snap install --classic go"
+            ]
+        }
+    ]
+}
