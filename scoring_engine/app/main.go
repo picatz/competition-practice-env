@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"log"
 	"net"
-	"net/http"
 	"time"
 
 	// Imports the Stackdriver Logging client package.
@@ -20,13 +19,13 @@ type scoringEntry struct {
 	Err     error
 }
 
-func scoreHTTP(logger *logging.Logger, team, url string) {
-	resp, err := http.Get(url)
+func scoreHTTP(logger *logging.Logger, team, ip string) {
+	conn, err := net.DialTimeout("tcp", fmt.Sprintf("%s:80", ip), 3*time.Second)
 	if err != nil {
 		logger.Log(logging.Entry{Payload: scoringEntry{Service: "http", Team: team, Points: 0, Err: err}})
 		return
 	}
-	defer resp.Body.Close()
+	defer conn.Close()
 	logger.Log(logging.Entry{Payload: scoringEntry{Service: "http", Team: team, Points: 1}})
 }
 
@@ -60,14 +59,14 @@ func scoreFTP(logger *logging.Logger, team, ip string) {
 	logger.Log(logging.Entry{Payload: scoringEntry{Service: "ftp", Team: team, Points: 1}})
 }
 
-func scoreRDP(logger *logging.Logger, team, ip string) {
-	conn, err := net.DialTimeout("tcp", fmt.Sprintf("%s:3389", ip), 3*time.Second)
+func scoreMsSQL(logger *logging.Logger, team, ip string) {
+	conn, err := net.DialTimeout("tcp", fmt.Sprintf("%s:1433", ip), 3*time.Second)
 	if err != nil {
-		logger.Log(logging.Entry{Payload: scoringEntry{Service: "rdp", Team: team, Points: 0, Err: err}})
+		logger.Log(logging.Entry{Payload: scoringEntry{Service: "mssql", Team: team, Points: 0, Err: err}})
 		return
 	}
 	defer conn.Close()
-	logger.Log(logging.Entry{Payload: scoringEntry{Service: "rdp", Team: team, Points: 1}})
+	logger.Log(logging.Entry{Payload: scoringEntry{Service: "mssql", Team: team, Points: 1}})
 }
 
 func scoreLDAP(logger *logging.Logger, team, ip string) {
@@ -96,22 +95,40 @@ func main() {
 
 	checks := map[string]map[string]string{
 		"team1": map[string]string{
-			"http": "https://www.google.com",
+			"http":  "192.168.1.2",
+			"ssh":   "192.168.1.2",
+			"ftp":   "192.168.1.3",
+			"mysql": "192.168.1.3",
+			"mssql": "192.168.1.4",
+			"ldap":  "192.168.1.4",
 		},
 		"team2": map[string]string{
-			"http": "https://www.google.com",
+			"http":  "192.168.2.2",
+			"ssh":   "192.168.2.2",
+			"ftp":   "192.168.2.3",
+			"mysql": "192.168.2.3",
+			"mssql": "192.168.2.4",
+			"ldap":  "192.168.2.4",
 		},
 	}
 
 	// main scoring logic
 	for {
 		for team, services := range checks {
-			for service, uri := range services {
+			for service, ip := range services {
 				switch service {
 				case "http":
-					scoreHTTP(logger, team, uri)
+					go scoreHTTP(logger, team, ip)
 				case "ssh":
-					fmt.Println("not implemented")
+					go scoreSSH(logger, team, ip)
+				case "ftp":
+					go scoreFTP(logger, team, ip)
+				case "mysql":
+					go scoreMySQL(logger, team, ip)
+				case "mssql":
+					go scoreMsSQL(logger, team, ip)
+				case "ldap":
+					go scoreLDAP(logger, team, ip)
 				}
 			}
 		}
