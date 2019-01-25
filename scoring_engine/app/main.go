@@ -1,8 +1,11 @@
 package main
 
 import (
+	"fmt"
 	"log"
+	"net"
 	"net/http"
+	"time"
 
 	// Imports the Stackdriver Logging client package.
 	"cloud.google.com/go/logging"
@@ -10,23 +13,73 @@ import (
 	"google.golang.org/api/option"
 )
 
-type httpEntry struct {
-	Up   bool
-	Team string
-	Err  error
+type scoringEntry struct {
+	Service string
+	Points  int
+	Team    string
+	Err     error
 }
 
-func scorHTTP(logger *logging.Logger, services map[string]string) {
-	for team, url := range services {
-		resp, err := http.Get(url)
-		if err != nil {
-			logger.Log(logging.Entry{Payload: httpEntry{Team: team, Up: false, Err: err}})
-			continue
-		}
-		defer resp.Body.Close()
-		logger.Log(logging.Entry{Payload: httpEntry{Team: team, Up: true}})
+func scoreHTTP(logger *logging.Logger, team, url string) {
+	resp, err := http.Get(url)
+	if err != nil {
+		logger.Log(logging.Entry{Payload: scoringEntry{Service: "http", Team: team, Points: 0, Err: err}})
+		return
 	}
+	defer resp.Body.Close()
+	logger.Log(logging.Entry{Payload: scoringEntry{Service: "http", Team: team, Points: 1}})
 }
+
+func scoreSSH(logger *logging.Logger, team, ip string) {
+	conn, err := net.DialTimeout("tcp", fmt.Sprintf("%s:22", ip), 3*time.Second)
+	if err != nil {
+		logger.Log(logging.Entry{Payload: scoringEntry{Service: "ssh", Team: team, Points: 0, Err: err}})
+		return
+	}
+	defer conn.Close()
+	logger.Log(logging.Entry{Payload: scoringEntry{Service: "ssh", Team: team, Points: 1}})
+}
+
+func scoreMySQL(logger *logging.Logger, team, ip string) {
+	conn, err := net.DialTimeout("tcp", fmt.Sprintf("%s:3306", ip), 3*time.Second)
+	if err != nil {
+		logger.Log(logging.Entry{Payload: scoringEntry{Service: "mysql", Team: team, Points: 0, Err: err}})
+		return
+	}
+	defer conn.Close()
+	logger.Log(logging.Entry{Payload: scoringEntry{Service: "mysql", Team: team, Points: 1}})
+}
+
+func scoreFTP(logger *logging.Logger, team, ip string) {
+	conn, err := net.DialTimeout("tcp", fmt.Sprintf("%s:21", ip), 3*time.Second)
+	if err != nil {
+		logger.Log(logging.Entry{Payload: scoringEntry{Service: "ftp", Team: team, Points: 0, Err: err}})
+		return
+	}
+	defer conn.Close()
+	logger.Log(logging.Entry{Payload: scoringEntry{Service: "ftp", Team: team, Points: 1}})
+}
+
+func scoreRDP(logger *logging.Logger, team, ip string) {
+	conn, err := net.DialTimeout("tcp", fmt.Sprintf("%s:3389", ip), 3*time.Second)
+	if err != nil {
+		logger.Log(logging.Entry{Payload: scoringEntry{Service: "rdp", Team: team, Points: 0, Err: err}})
+		return
+	}
+	defer conn.Close()
+	logger.Log(logging.Entry{Payload: scoringEntry{Service: "rdp", Team: team, Points: 1}})
+}
+
+func scoreLDAP(logger *logging.Logger, team, ip string) {
+	conn, err := net.DialTimeout("tcp", fmt.Sprintf("%s:389", ip), 3*time.Second)
+	if err != nil {
+		logger.Log(logging.Entry{Payload: scoringEntry{Service: "ldap", Team: team, Points: 0, Err: err}})
+		return
+	}
+	defer conn.Close()
+	logger.Log(logging.Entry{Payload: scoringEntry{Service: "ldap", Team: team, Points: 1}})
+}
+
 func main() {
 	ctx := context.Background()
 	// Sets your Google Cloud Platform project ID.
@@ -38,8 +91,30 @@ func main() {
 	}
 	defer client.Close()
 	// Sets the name of the log to write to.
-	logName := "my-log-2"
+	logName := "my-log-3"
 	logger := client.Logger(logName)
-	services := map[string]string{"team1": "https://www.google.com", "team2": "https://www.google.com"}
-	scorHTTP(logger, services)
+
+	checks := map[string]map[string]string{
+		"team1": map[string]string{
+			"http": "https://www.google.com",
+		},
+		"team2": map[string]string{
+			"http": "https://www.google.com",
+		},
+	}
+
+	// main scoring logic
+	for {
+		for team, services := range checks {
+			for service, uri := range services {
+				switch service {
+				case "http":
+					scoreHTTP(logger, team, uri)
+				case "ssh":
+					fmt.Println("not implemented")
+				}
+			}
+		}
+		time.Sleep(5 * time.Second)
+	}
 }
