@@ -66,15 +66,62 @@ resource "google_compute_firewall" "allow_rdp" {
   depends_on = ["google_compute_network.team1"]
 }
 
-resource "google_compute_firewall" "allow_winrm" {
-  name    = "allow-winrm"
+resource "google_compute_firewall" "allow_http" {
+  name    = "allow-http"
   network = "team1-network"
 
   allow {
     protocol = "tcp"
-    ports    = ["5986"]
+    ports    = ["80"]
   }
   
   depends_on = ["google_compute_network.team1"]
 }
 
+resource "google_compute_firewall" "allow_ftp" {
+  name    = "allow-ftp"
+  network = "team1-network"
+
+  allow {
+    protocol = "tcp"
+    ports    = ["21"]
+  }
+  
+  depends_on = ["google_compute_network.team1"]
+}
+
+resource "google_compute_firewall" "allow_ldap" {
+  name    = "allow-ldap"
+  network = "team1-network"
+
+  allow {
+    protocol = "tcp"
+    ports    = ["389"]
+  }
+  
+  depends_on = ["google_compute_network.team1"]
+}
+
+resource "google_compute_firewall" "allow_mysql" {
+  name    = "allow-mysql"
+  network = "team1-network"
+
+  allow {
+    protocol = "tcp"
+    ports    = ["3306"]
+  }
+  
+  depends_on = ["google_compute_network.team1"]
+}
+
+resource "google_compute_firewall" "allow_mssql" {
+  name    = "allow-mssql"
+  network = "team1-network"
+
+  allow {
+    protocol = "tcp"
+    ports    = ["1433"]
+  }
+  
+  depends_on = ["google_compute_network.team1"]
+}
