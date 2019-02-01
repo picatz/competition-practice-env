@@ -1,0 +1,50 @@
+{
+    "builders": [
+        {
+            "type": "googlecompute",
+            "name": "builder1",
+            "account_file": "../../team1/account.json",
+            "project_id": "iasa-team-0001",
+            "source_image": "centos-7-v20190116",
+            "image_description": "CentOS fun",
+            "image_name": "centos-server",
+            "disk_size": "10",
+            "machine_type": "n1-standard-1",
+            "state_timeout": "15m",
+            "ssh_username": "rhel",
+            "zone": "us-east1-b",
+            "metadata": {
+                "enable-oslogin": "false"
+            }
+        },
+        {
+            "type": "googlecompute",
+            "name": "builder2",
+            "account_file": "../../team2/account.json",
+            "project_id": "iasa-team-0010",
+            "source_image": "centos-7-v20190116",
+            "image_description": "CentOS fun",
+            "image_name": "centos-server",
+            "disk_size": "10",
+            "machine_type": "n1-standard-1",
+            "state_timeout": "15m",
+            "ssh_username": "rhel",
+            "zone": "us-east1-b",
+            "metadata": {
+                "enable-oslogin": "false"
+            }
+        }
+    ],
+    "provisioners": [
+        {
+            "type": "shell",
+            "inline": [
+                "sudo yum update -y && sudo yum upgrade -y",
+                "sudo rm /usr/bin/wall",
+                "echo 'Installing stack driver agent'",
+                "curl -s https://dl.google.com/cloudagents/install-logging-agent.sh | sudo bash",
+                "sudo sed -i 's/#MaxSessions 10/MaxSessions 10/' /etc/ssh/sshd_config"
+            ]
+        }
+    ]
+}
