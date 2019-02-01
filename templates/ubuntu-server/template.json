@@ -12,6 +12,19 @@
             "state_timeout": "15m",
             "ssh_username": "ubuntu",
             "zone": "us-east1-b"
+        },
+        {
+            "type": "googlecompute",
+            "account_file": "../../team2/account.json",
+            "project_id": "iasa-team-0010",
+            "source_image": "ubuntu-1804-bionic-v20190122",
+            "image_description": "custom ubuntu server example",
+            "image_name": "ubuntu-server",
+            "disk_size": "10",
+            "machine_type": "n1-standard-1",
+            "state_timeout": "15m",
+            "ssh_username": "ubuntu",
+            "zone": "us-east1-b"
         }
     ],
     "provisioners": [
