@@ -1,0 +1,74 @@
+{
+    "builders": [
+        {
+            "type": "googlecompute",
+            "account_file": "../team1/account.json",
+            "project_id": "iasa-team-0001",
+            "source_image": "ubuntu-1804-bionic-v20190122",
+            "image_description": "custom ubuntu server example",
+            "image_name": "ubuntu-wordpress-server",
+            "disk_size": "10",
+            "machine_type": "n1-standard-1",
+            "state_timeout": "15m",
+            "ssh_username": "ubuntu",
+            "zone": "us-east1-b"
+        }
+    ],
+    "provisioners": [
+        {
+            "type": "shell",
+            "inline": [
+                "export DEBIAN_FRONTEND=noninteractive",
+                "sudo apt-get update  -y",
+                "sudo apt-get upgrade -y",
+                "sudo rm /usr/bin/wall",
+                "echo 'Installing stack driver agent'",
+                "curl -s https://dl.google.com/cloudagents/install-logging-agent.sh | sudo bash",
+                "sudo apt-get install curl apache2 mysql-server wordpress -y"
+            ]
+        },
+        {
+            "type": "file",
+            "source": "wordpress.conf",
+            "destination": "/tmp/wordpress.conf"
+        },
+        {
+            "type": "shell",
+            "inline": [
+                "sudo cp /tmp/wordpress.conf /etc/apache2/sites-available/wordpress.conf",
+                "rm /tmp/wordpress.conf"
+            ]
+        },
+        {
+            "type": "shell",
+            "inline": [
+                "sudo a2ensite wordpress",
+                "sudo systemctl restart apache2.service"
+            ]
+        },
+        {
+            "type": "file",
+            "source": "config-localhost.php",
+            "destination": "/tmp/config-localhost.php"
+        },
+        {
+            "type": "shell",
+            "inline": [
+                "sudo cp /tmp/config-localhost.php /etc/wordpress/config-localhost.php",
+                "rm /tmp/config-localhost.php"
+            ]
+        },
+        {
+            "type": "file",
+            "source": "wordpress.sql",
+            "destination": "/tmp/wordpress.sql"
+        },
+        {
+            "type": "shell",
+            "inline": [
+                "cat /tmp/wordpress.sql | sudo mysql --defaults-extra-file=/etc/mysql/debian.cnf",
+                "curl http://localhost/blog/wp-admin/install.php"
+            ]
+        }
+    ]
+}
