@@ -1,0 +1,31 @@
+{
+    "builders": [
+        {
+            "type": "googlecompute",
+            "account_file": "../account.json",
+            "project_id": "iasa-team-0001",
+            "source_image": "centos-7-v20190116",
+            "image_description": "Find the broken things",
+            "image_name": "CentOS 7 Fun Box",
+            "disk_size": "10",
+            "machine_type": "n1-standard-1",
+            "state_timeout": "15m",
+            "ssh_username": "packer",
+            "zone": "us-east1-b"
+        }
+    ],
+    "provisioners": [
+        {
+            "type": "shell",
+            "inline": [
+                "sudo yum update && sudo yum upgrade -y",
+                "sudo yum install --quiet php -y",
+                "sudo yum install --quiet -y kernel-devel",
+                "sudo yum install --quiet -y kernel-headers",
+                "yum install --quiet -y chattr",
+                "echo 'Installing stack driver agent'",
+                "curl -s https://dl.google.com/cloudagents/install-logging-agent.sh | sudo bash"
+            ]
+        }
+    ]
+}
