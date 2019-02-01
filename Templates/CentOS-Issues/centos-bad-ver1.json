@@ -4,9 +4,9 @@
             "type": "googlecompute",
             "account_file": "../account.json",
             "project_id": "iasa-team-0001",
-            "source_image": "ubuntu-1810-cosmic-v20190122",
+            "source_image": "centos-7-v20190116",
             "image_description": "Find the broken things",
-            "image_name": "Ubuntu 18.10 Fun Box",
+            "image_name": "CentOS 7 Fun Box",
             "disk_size": "10",
             "machine_type": "n1-standard-1",
             "state_timeout": "15m",
@@ -18,7 +18,11 @@
         {
             "type": "shell",
             "inline": [
-                "sudo apt-get install chattr -y",
+                "sudo yum update && sudo yum upgrade -y",
+                "sudo yum install --quiet php -y",
+                "sudo yum install --quiet -y kernel-devel",
+                "sudo yum install --quiet -y kernel-headers",
+                "yum install --quiet -y chattr",
                 "echo 'Installing stack driver agent'",
                 "curl -s https://dl.google.com/cloudagents/install-logging-agent.sh | sudo bash"
             ]
