@@ -2,7 +2,7 @@
     "builders": [
         {
             "type": "googlecompute",
-            "account_file": "../team1/account.json",
+            "account_file": "../../team1/account.json",
             "project_id": "iasa-team-0001",
             "source_image": "ubuntu-1804-bionic-v20190122",
             "image_description": "custom ubuntu server example",
