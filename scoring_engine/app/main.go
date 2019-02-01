@@ -90,23 +90,33 @@ func main() {
 	}
 	defer client.Close()
 	// Sets the name of the log to write to.
-	logName := "my-log-3"
+	logName := "friday-feb-1-2019"
 	logger := client.Logger(logName)
 
 	checks := map[string]map[string]string{
 		"team1": map[string]string{
-			"http":  "192.168.1.2",
-			"ssh":   "192.168.1.2",
-			"ftp":   "192.168.1.3",
-			"mysql": "192.168.1.3",
+			// ubuntu
+			"http": "192.168.1.2",
+			// ubuntu2
+			"ssh": "192.168.1.5",
+			// centos
+			"ftp": "192.168.1.3",
+			// centos2
+			"mysql": "192.168.1.6",
+			// windows
 			"mssql": "192.168.1.4",
 			"ldap":  "192.168.1.4",
 		},
 		"team2": map[string]string{
-			"http":  "192.168.2.2",
-			"ssh":   "192.168.2.2",
-			"ftp":   "192.168.2.3",
-			"mysql": "192.168.2.3",
+			// ubuntu
+			"http": "192.168.2.2",
+			// ubuntu2
+			"ssh": "192.168.2.5",
+			// centos
+			"ftp": "192.168.2.3",
+			// centos2
+			"mysql": "192.168.2.6",
+			// windows
 			"mssql": "192.168.2.4",
 			"ldap":  "192.168.2.4",
 		},
