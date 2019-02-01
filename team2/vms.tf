@@ -5,9 +5,11 @@ resource "google_compute_instance" "ubuntu" {
 
   allow_stopping_for_update = true
 
+  tags = ["http-server"]
+
   boot_disk {
     initialize_params {
-      image = "ubuntu-os-cloud/ubuntu-1804-lts"
+      image = "ubuntu-server-wordpress"
       size  = 10
     }
   }
@@ -23,7 +25,38 @@ resource "google_compute_instance" "ubuntu" {
   }
 
   metadata {
-    enable-oslogin = true
+    enable-oslogin = "TRUE"
+  }
+
+  depends_on = ["google_compute_subnetwork.team2"]
+}
+
+resource "google_compute_instance" "ubuntu2" {
+  name         = "ubuntu2"
+  machine_type = "n1-standard-1"
+  zone         = "us-east1-b"
+
+  allow_stopping_for_update = true
+
+  boot_disk {
+    initialize_params {
+      image = "ubuntu-server"
+      size  = 10
+    }
+  }
+
+  network_interface {
+    subnetwork = "team2-subnet"
+
+    network_ip = "192.168.2.5"
+
+    access_config {
+      // Ephemeral IP
+    }
+  }
+
+  metadata {
+    enable-oslogin = "TRUE"
   }
 
   depends_on = ["google_compute_subnetwork.team2"]
@@ -38,7 +71,7 @@ resource "google_compute_instance" "centos" {
 
   boot_disk {
     initialize_params {
-      image = "centos-cloud/centos-7"
+      image = "centos-server-backdoored"
       size  = 10
     }
   }
@@ -54,7 +87,38 @@ resource "google_compute_instance" "centos" {
   }
 
   metadata {
-    enable-oslogin = true
+    enable-oslogin = "TRUE"
+  }
+
+  depends_on = ["google_compute_subnetwork.team2"]
+}
+
+resource "google_compute_instance" "centos2" {
+  name         = "centos2"
+  machine_type = "n1-standard-1"
+  zone         = "us-east1-b"
+
+  allow_stopping_for_update = true
+
+  boot_disk {
+    initialize_params {
+      image = "centos-cloud/centos-7"
+      size  = 10
+    }
+  }
+
+  network_interface {
+    subnetwork = "team2-subnet"
+
+    network_ip = "192.168.2.6"
+
+    access_config {
+      // Ephemeral IP
+    }
+  }
+
+  metadata {
+    enable-oslogin = "TRUE"
   }
 
   depends_on = ["google_compute_subnetwork.team2"]
@@ -85,7 +149,7 @@ resource "google_compute_instance" "windows" {
   }
 
   metadata {
-    enable-oslogin = true
+    enable-oslogin = "TRUE"
   }
 
   depends_on = ["google_compute_subnetwork.team2"]
