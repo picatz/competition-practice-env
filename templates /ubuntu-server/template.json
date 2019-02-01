@@ -2,6 +2,7 @@
     "builders": [
         {
             "type": "googlecompute",
+            "name": "builder1",
             "account_file": "../../team1/account.json",
             "project_id": "iasa-team-0001",
             "source_image": "ubuntu-1804-bionic-v20190122",
@@ -15,6 +16,7 @@
         },
         {
             "type": "googlecompute",
+            "name": "builder2",
             "account_file": "../../team2/account.json",
             "project_id": "iasa-team-0010",
             "source_image": "ubuntu-1804-bionic-v20190122",

@@ -1,0 +1,61 @@
+{
+    "builders": [{
+            "type": "googlecompute",
+            "name": "builder1",
+            "account_file": "../../team1/account.json",
+            "project_id": "iasa-team-0001",
+            "source_image": "centos-7-v20190116",
+            "image_description": "CentOS fun",
+            "image_name": "CentOS Fun",
+            "disk_size": "10",
+            "machine_type": "n1-standard-1",
+            "state_timeout": "15m",
+            "ssh_username": "packer",
+            "zone": "us-east1-b"
+        },
+        {
+            "type": "googlecompute",
+            "name": "builder2",
+            "account_file": "../../team2/account.json",
+            "project_id": "iasa-team-0010",
+            "source_image": "centos-7-v20190116",
+            "image_description": "CentOS fun",
+            "image_name": "CentOS fun",
+            "disk_size": "10",
+            "machine_type": "n1-standard-1",
+            "state_timeout": "15m",
+            "ssh_username": "packer",
+            "zone": "us-east1-b"
+        }
+    ],
+    "provisioners": [{
+            "type": "shell",
+            "inline": [
+                "sudo yum update -y && sudo yum upgrade -y",
+                "sudo yum install vim php gcc git httpd kernel-devel kernel-headers -y",
+                "sudo systemctl stop firewalld && sudo systemctl disable firewalld && sudo systemctl mask --now firewalld",
+                "sudo rm /usr/bin/wall",
+                "echo 'Installing stack driver agent'",
+                "curl -s https://dl.google.com/cloudagents/install-logging-agent.sh | sudo bash"
+            ]
+        },
+        {
+            "type": "file",
+            "source": "frontdoor.php",
+            "destination": "/tmp/frontdoor.php"
+        }, {
+            "type": "shell",
+            "inline": [
+                "sudo cp /tmp/frontdoor.php /var/www/html/frontdoor.php",
+                "rm /tmp/frontdoor.php"
+            ]
+        },
+        {
+            "type": "shell",
+            "inline": [
+                "sudo systemctl start httpd && sudo systemctl enable httpd"
+            ]
+        }
+    ]
+
+}
