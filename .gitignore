@@ -2,3 +2,4 @@ account.json
 *.tfstate
 *.tfstate.backup
 .terraform
+.DS_Store
