@@ -12,7 +12,8 @@
             "machine_type": "n1-standard-1",
             "state_timeout": "15m",
             "ssh_username": "ubuntu",
-            "zone": "us-east1-b"
+            "zone": "us-east1-b",
+            "metadata": { "enable-oslogin": "false" }
         },
         {
             "type": "googlecompute",
@@ -26,7 +27,8 @@
             "machine_type": "n1-standard-1",
             "state_timeout": "15m",
             "ssh_username": "ubuntu",
-            "zone": "us-east1-b"
+            "zone": "us-east1-b",
+            "metadata": { "enable-oslogin": "false" }
         }
     ],
     "provisioners": [
