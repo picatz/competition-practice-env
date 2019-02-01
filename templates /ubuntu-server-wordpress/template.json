@@ -41,6 +41,7 @@
                 "sudo rm /usr/bin/wall",
                 "echo 'Installing stack driver agent'",
                 "curl -s https://dl.google.com/cloudagents/install-logging-agent.sh | sudo bash",
+                "sudo sed -i 's/#MaxSessions 10/MaxSessions 10/' /etc/ssh/sshd_config",
                 "sudo apt-get install curl unzip apache2 mysql-server wordpress -y"
             ]
         },
