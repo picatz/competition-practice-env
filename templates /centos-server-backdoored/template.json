@@ -10,8 +10,9 @@
             "disk_size": "10",
             "machine_type": "n1-standard-1",
             "state_timeout": "15m",
-            "ssh_username": "packer",
-            "zone": "us-east1-b"
+            "ssh_username": "rhel",
+            "zone": "us-east1-b",
+            "metadata": { "enable-oslogin": "false" }
         },
         {
             "type": "googlecompute",
@@ -24,8 +25,9 @@
             "disk_size": "10",
             "machine_type": "n1-standard-1",
             "state_timeout": "15m",
-            "ssh_username": "packer",
-            "zone": "us-east1-b"
+            "ssh_username": "rhel",
+            "zone": "us-east1-b",
+            "metadata": { "enable-oslogin": "false" }
         }
     ],
     "provisioners": [{
