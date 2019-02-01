@@ -53,7 +53,6 @@ resource "google_compute_firewall" "allow_ssh" {
   depends_on = ["google_compute_network.team1"]
 }
 
-
 resource "google_compute_firewall" "allow_rdp" {
   name    = "allow-rdp"
   network = "team1-network"

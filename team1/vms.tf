@@ -1,7 +1,9 @@
 resource "google_compute_instance" "ubuntu" {
   name         = "ubuntu"
-  machine_type = "f1-micro"
+  machine_type = "n1-standard-1"
   zone         = "us-east1-b"
+
+  allow_stopping_for_update = true
 
   boot_disk {
     initialize_params {
@@ -29,8 +31,10 @@ resource "google_compute_instance" "ubuntu" {
 
 resource "google_compute_instance" "centos" {
   name         = "centos"
-  machine_type = "f1-micro"
+  machine_type = "n1-standard-1"
   zone         = "us-east1-b"
+
+  allow_stopping_for_update = true
 
   boot_disk {
     initialize_params {
@@ -58,8 +62,10 @@ resource "google_compute_instance" "centos" {
 
 resource "google_compute_instance" "windows" {
   name         = "windows"
-  machine_type = "f1-micro"
+  machine_type = "n1-standard-2"
   zone         = "us-east1-b"
+
+  allow_stopping_for_update = true
 
   boot_disk {
     initialize_params {
