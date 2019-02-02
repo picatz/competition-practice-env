@@ -29,6 +29,16 @@ func scoreHTTP(logger *logging.Logger, team, ip string) {
 	logger.Log(logging.Entry{Payload: scoringEntry{Service: "http", Team: team, Points: 1}})
 }
 
+func scoreES(logger *logging.Logger, team, ip string) {
+	conn, err := net.DialTimeout("tcp", fmt.Sprintf("%s:9200", ip), 3*time.Second)
+	if err != nil {
+		logger.Log(logging.Entry{Payload: scoringEntry{Service: "es", Team: team, Points: 0, Err: err}})
+		return
+	}
+	defer conn.Close()
+	logger.Log(logging.Entry{Payload: scoringEntry{Service: "es", Team: team, Points: 1}})
+}
+
 func scoreSSH(logger *logging.Logger, team, ip string) {
 	conn, err := net.DialTimeout("tcp", fmt.Sprintf("%s:22", ip), 3*time.Second)
 	if err != nil {
@@ -99,6 +109,7 @@ func main() {
 			"http": "192.168.1.2",
 			// ubuntu2
 			"ssh": "192.168.1.5",
+			"es":  "192.168.1.5",
 			// centos
 			"ftp": "192.168.1.3",
 			// centos2
@@ -112,6 +123,7 @@ func main() {
 			"http": "192.168.2.2",
 			// ubuntu2
 			"ssh": "192.168.2.5",
+			"es":  "192.168.2.5",
 			// centos
 			"ftp": "192.168.2.3",
 			// centos2
