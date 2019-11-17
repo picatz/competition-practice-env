@@ -1,4 +1,4 @@
 provider "google" {
   project     = var.project
-  credentials = file("account.json")
+  credentials = var.credentials
 }

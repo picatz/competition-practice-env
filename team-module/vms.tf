@@ -15,8 +15,6 @@ resource "google_compute_instance" "ubuntu" {
   network_interface {
     subnetwork = google_compute_subnetwork.team.name
 
-    network_ip = "192.168.2.2"
-
     access_config {
       // Ephemeral IP
     }
@@ -44,8 +42,6 @@ resource "google_compute_instance" "centos" {
   network_interface {
     subnetwork = google_compute_subnetwork.team.name
 
-    network_ip = "192.168.2.3"
-
     access_config {
       // Ephemeral IP
     }
@@ -72,8 +68,6 @@ resource "google_compute_instance" "windows" {
 
   network_interface {
     subnetwork = google_compute_subnetwork.team.name
-
-    network_ip = "192.168.2.4"
 
     access_config {
       // Ephemeral IP

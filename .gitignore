@@ -2,4 +2,5 @@ account.json
 *.tfstate
 *.tfstate.backup
 .terraform
+.terraform.tfstate.lock.info
 .DS_Store
