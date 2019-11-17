@@ -1,11 +1,14 @@
 {
+    "variables": {
+        "project": ""
+    },
     "builders": [
         {
             "type": "googlecompute",
             "account_file": "../account.json",
-            "project_id": "iasa-scoring-engine",
-            "source_image": "ubuntu-1804-bionic-v20181222",
-            "image_description": "i duno",
+            "project_id": "{{user `project`}}",
+            "source_image": "ubuntu-1804-bionic-v20191113",
+            "image_description": "scoring engine image",
             "image_name": "engine",
             "disk_size": "10",
             "machine_type": "n1-standard-4",

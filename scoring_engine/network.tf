@@ -4,65 +4,46 @@ resource "google_compute_network" "scoring" {
 }
 
 resource "google_compute_subnetwork" "scoring" {
-  network = "scoring-network"
+  network = google_compute_network.scoring.name
   name    = "scoring-subnet"
-  region  = "us-east1"
+  region  = "${var.region}"
 
-  ip_cidr_range = "192.168.3.0/24"
-
-  depends_on = ["google_compute_network.scoring"]
+  ip_cidr_range = "${var.cidr_range}"
 }
-
-
-
 
 resource "google_compute_firewall" "allow_icmp" {
   name    = "allow-icmp"
-  network = "scoring-network"
+  network = google_compute_network.scoring.name
 
   allow {
     protocol = "icmp"
   }
-
-  depends_on = ["google_compute_network.scoring"]
 }
 
 resource "google_compute_firewall" "allow_ssh" {
   name    = "allow-ssh"
-  network = "scoring-network"
+  network = google_compute_network.scoring.name
 
   allow {
     protocol = "tcp"
     ports    = ["22"]
   }
-  
-  depends_on = ["google_compute_network.scoring"]
 }
 
 resource "google_compute_firewall" "allow_web" {
   name    = "allow-web"
-  network = "scoring-network"
+  network = google_compute_network.scoring.name
 
   allow {
     protocol = "tcp"
     ports    = ["80"]
   }
-  
-  depends_on = ["google_compute_network.scoring"]
 }
 
-resource "google_compute_network_peering" "team1" {
-  name = "team1-peering"
-  network = "https://www.googleapis.com/compute/v1/projects/iasa-scoring-engine/global/networks/scoring-network"
-  peer_network = "https://www.googleapis.com/compute/v1/projects/iasa-team-0001/global/networks/team1-network"
+resource "google_compute_network_peering" "teams" {
+  for_each = var.teams
 
-  depends_on = ["google_compute_network.scoring"]
-}
-
-resource "google_compute_network_peering" "team2" {
-  name = "team2-peering"
-  network = "https://www.googleapis.com/compute/v1/projects/iasa-scoring-engine/global/networks/scoring-network"
-  peer_network = "https://www.googleapis.com/compute/v1/projects/iasa-team-0010/global/networks/team2-network"
-
-  depends_on = ["google_compute_network.scoring", "google_compute_network_peering.team1"]
+  name         = "${each.value}-peering"
+  network      = "https://www.googleapis.com/compute/v1/projects/${var.project}/global/networks/${google_compute_network.scoring.name}"
+  peer_network = "https://www.googleapis.com/compute/v1/projects/${each.key}/global/networks/${each.value}"
 }

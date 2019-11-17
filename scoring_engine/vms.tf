@@ -11,12 +11,12 @@ resource "google_compute_instance" "engine" {
   }
 
   network_interface {
-    subnetwork = "scoring-subnet"
+    subnetwork = google_compute_subnetwork.scoring.name
 
     access_config {
       // Ephemeral IP
     }
   }
 
-  depends_on = ["google_compute_subnetwork.scoring", "null_resource.template"]
+  depends_on = ["null_resource.template"]
 }

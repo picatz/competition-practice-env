@@ -13,7 +13,7 @@ resource "google_compute_instance" "ubuntu" {
   }
 
   network_interface {
-    subnetwork = "team1-subnet"
+    subnetwork = google_compute_subnetwork.team.name
 
     network_ip = "192.168.1.2"
 
@@ -22,11 +22,9 @@ resource "google_compute_instance" "ubuntu" {
     }
   }
 
-  metadata {
+  metadata = {
     enable-oslogin = true
   }
-
-  depends_on = ["google_compute_subnetwork.team1"]
 }
 
 resource "google_compute_instance" "centos" {
@@ -44,7 +42,7 @@ resource "google_compute_instance" "centos" {
   }
 
   network_interface {
-    subnetwork = "team1-subnet"
+    subnetwork = google_compute_subnetwork.team.name
 
     network_ip = "192.168.1.3"
 
@@ -53,11 +51,9 @@ resource "google_compute_instance" "centos" {
     }
   }
 
-  metadata {
+  metadata = {
     enable-oslogin = true
   }
-
-  depends_on = ["google_compute_subnetwork.team1"]
 }
 
 resource "google_compute_instance" "windows" {
@@ -75,7 +71,7 @@ resource "google_compute_instance" "windows" {
   }
 
   network_interface {
-    subnetwork = "team1-subnet"
+    subnetwork = google_compute_subnetwork.team.name
 
     network_ip = "192.168.1.4"
 
@@ -84,9 +80,7 @@ resource "google_compute_instance" "windows" {
     }
   }
 
-  metadata {
+  metadata = {
     enable-oslogin = true
   }
-
-  depends_on = ["google_compute_subnetwork.team1"]
 }

@@ -1,4 +1,4 @@
 provider "google" {
-  project     = "iasa-team-0010"
-  credentials = "${file("account.json")}"
+  project     = var.project
+  credentials = file("account.json")
 }

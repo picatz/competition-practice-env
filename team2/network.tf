@@ -1,126 +1,107 @@
-resource "google_compute_network" "team2" {
-  name = "team2-network"
+resource "google_compute_network" "team" {
+  name = "${var.team_name}-network"
   auto_create_subnetworks = false
 }
 
-resource "google_compute_subnetwork" "team2" {
-  network = "team2-network"
-  name    = "team2-subnet"
-  region  = "us-east1"
+resource "google_compute_subnetwork" "team" {
+  network = google_compute_network.team.name
+  name    = "${var.team_name}-subnet"
+  region  = "${var.region}"
 
-  ip_cidr_range = "192.168.2.0/24"
-
-  depends_on = ["google_compute_network.team2"]
+  ip_cidr_range = "${var.cidr_range}"
 }
 
-resource "google_compute_network_peering" "team2" {
-  name = "team2-peering"
-  network = "https://www.googleapis.com/compute/v1/projects/iasa-team-0010/global/networks/team2-network"
-  peer_network = "https://www.googleapis.com/compute/v1/projects/iasa-team-0001/global/networks/team1-network"
+resource "google_compute_network_peering" "team" {
+  for_each = var.enemy_teams
 
-  depends_on = ["google_compute_network.team2"]
+  name         = "${each.value}-peering"
+  network      = "https://www.googleapis.com/compute/v1/projects/${var.project}/global/networks/${google_compute_network.team.name}"
+  peer_network = "https://www.googleapis.com/compute/v1/projects/${each.key}/global/networks/${each.value}"
 }
 
 resource "google_compute_network_peering" "scoring" {
-  name = "scoring-peering"
-  network = "https://www.googleapis.com/compute/v1/projects/iasa-team-0010/global/networks/team2-network"
-  peer_network = "https://www.googleapis.com/compute/v1/projects/iasa-scoring-engine/global/networks/scoring-network"
+  for_each = var.scoring_engine
 
-  depends_on = ["google_compute_network.team2", "google_compute_network_peering.team2"]
+  name         = "scoring-peering"
+  network      = "https://www.googleapis.com/compute/v1/projects/${var.project}/global/networks/${google_compute_network.team.name}"
+  peer_network = "https://www.googleapis.com/compute/v1/projects/${each.key}/global/networks/${each.value}"
 }
 
 resource "google_compute_firewall" "allow_icmp" {
   name    = "allow-icmp"
-  network = "team2-network"
+  network = google_compute_network.team.name
 
   allow {
     protocol = "icmp"
   }
-
-  depends_on = ["google_compute_network.team2"]
 }
 
 resource "google_compute_firewall" "allow_ssh" {
   name    = "allow-ssh"
-  network = "team2-network"
+  network = google_compute_network.team.name
 
   allow {
     protocol = "tcp"
     ports    = ["22"]
   }
-  
-  depends_on = ["google_compute_network.team2"]
 }
 
 resource "google_compute_firewall" "allow_rdp" {
   name    = "allow-rdp"
-  network = "team2-network"
+  network = google_compute_network.team.name
 
   allow {
     protocol = "tcp"
     ports    = ["3389"]
   }
-  
-  depends_on = ["google_compute_network.team2"]
 }
 
 resource "google_compute_firewall" "allow_http" {
   name    = "allow-http"
-  network = "team2-network"
+  network = google_compute_network.team.name
 
   allow {
     protocol = "tcp"
     ports    = ["80"]
   }
-  
-  depends_on = ["google_compute_network.team2"]
 }
 
 resource "google_compute_firewall" "allow_ftp" {
   name    = "allow-ftp"
-  network = "team2-network"
+  network = google_compute_network.team.name
 
   allow {
     protocol = "tcp"
     ports    = ["21"]
   }
-  
-  depends_on = ["google_compute_network.team2"]
 }
 
 resource "google_compute_firewall" "allow_ldap" {
   name    = "allow-ldap"
-  network = "team2-network"
+  network = google_compute_network.team.name
 
   allow {
     protocol = "tcp"
     ports    = ["389"]
   }
-  
-  depends_on = ["google_compute_network.team2"]
 }
 
 resource "google_compute_firewall" "allow_mysql" {
   name    = "allow-mysql"
-  network = "team2-network"
+  network = google_compute_network.team.name
 
   allow {
     protocol = "tcp"
     ports    = ["3306"]
   }
-  
-  depends_on = ["google_compute_network.team2"]
 }
 
 resource "google_compute_firewall" "allow_mssql" {
   name    = "allow-mssql"
-  network = "team2-network"
+  network = google_compute_network.team.name
 
   allow {
     protocol = "tcp"
     ports    = ["1433"]
   }
-  
-  depends_on = ["google_compute_network.team2"]
 }
-
