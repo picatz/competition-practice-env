@@ -17,5 +17,6 @@ variable "teams" {
   default = {
       # project -> team_network_name
       "emu-cloud-team-2" = "team2-network"
+      "emu-cloud-team-1" = "team1-network"
   }
 }

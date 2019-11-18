@@ -18,5 +18,7 @@ resource "google_compute_instance" "engine" {
     }
   }
 
+  tags = [ "http-server" ]
+
   depends_on = ["null_resource.template"]
 }

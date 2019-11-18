@@ -30,6 +30,19 @@ resource "google_compute_firewall" "allow_ssh" {
   }
 }
 
+resource "google_compute_firewall" "allow_scoring_engine_web_internet" {
+  name    = "allow-scoring-engine-web-internet"
+  network = google_compute_network.scoring.name
+
+  allow {
+    protocol = "tcp"
+    ports    = ["6767"]
+  }
+
+  source_ranges = ["0.0.0.0/0"]
+}
+
+
 resource "google_compute_firewall" "allow_web" {
   name    = "allow-web"
   network = google_compute_network.scoring.name
