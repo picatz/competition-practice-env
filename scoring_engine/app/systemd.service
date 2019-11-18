@@ -1,0 +1,15 @@
+[Unit]
+Description=Scoring Engine
+Requires=network-online.target
+After=network-online.target
+
+[Service]
+Type=simple
+ExecStart=/sbin/scoring-engine -config /opt/scoring-engine/service_registry.hcl
+KillMode=process
+Restart=on-failure
+StandardOutput=file:/var/log/scorine-engine.log
+StandardError=file:/var/log/scorine-engine.error.log
+
+[Install]
+WantedBy=multi-user.target

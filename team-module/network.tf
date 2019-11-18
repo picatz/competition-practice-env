@@ -17,6 +17,8 @@ resource "google_compute_network_peering" "team" {
   name         = "${each.value}-peering"
   network      = "https://www.googleapis.com/compute/v1/projects/${var.project}/global/networks/${google_compute_network.team.name}"
   peer_network = "https://www.googleapis.com/compute/v1/projects/${each.key}/global/networks/${each.value}"
+
+  depends_on = [google_compute_network_peering.scoring]
 }
 
 resource "google_compute_network_peering" "scoring" {

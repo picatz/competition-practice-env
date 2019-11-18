@@ -19,6 +19,33 @@
     ],
     "provisioners": [
         {
+            "type": "file",
+            "source": "../app/scoring-engine",
+            "destination": "/tmp/scoring-engine"
+        },
+        {
+            "type": "file",
+            "source": "../app/systemd.service",
+            "destination": "/tmp/scoring-engine.service"
+        },
+        {
+            "type": "file",
+            "source": "service_registry.hcl",
+            "destination": "/tmp/service_registry.hcl"
+        },
+        {
+            "type": "shell",
+            "inline": [
+                "sudo mkdir -p /opt/scoring-engine",
+                "sudo mv /tmp/service_registry.hcl /opt/scoring-engine/service_registry.hcl",
+                "sudo mv /tmp/scoring-engine /sbin/scoring-engine",
+                "sudo chown root:root /sbin/scoring-engine",
+                "sudo chmod 0700 /sbin/scoring-engine",
+                "sudo mv /tmp/scoring-engine.service /etc/systemd/system/scoring-engine.service",
+                "sudo systemctl enable scoring-engine.service"
+            ]
+        },
+        {
             "type": "shell",
             "inline": [
                 "export DEBIAN_FRONTEND=noninteractive",
