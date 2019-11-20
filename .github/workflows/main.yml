@@ -18,6 +18,7 @@ jobs:
     - name: Build Scoring Engine
       run: |
         cd ./scoring_engine/app
-        go get -u github.com/gobuffalo/packr/packr
-        packr build -o scoring-engine -v .
+        go mod download
+        go mod verify
+        go build -o scoring-engine -v .
         ./scoring-engine -help
