@@ -4,7 +4,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Hello Bulma!</title>
+    <title>Scoring Engine</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.8.0/css/bulma.min.css">
     <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
@@ -13,7 +13,7 @@
     <section class="section">
       <div class="container">
         <h1 class="title">
-          Scoring Engine
+            <i class="fas fa-rocket"></i> Scoring Engine
         </h1>
       </div>
     </section>
@@ -23,58 +23,73 @@
 </html>
 
 <script>
-  var options = {
-    chart: {
-      height: 430,
-      type: 'bar',
-    },
-    plotOptions: {
-      bar: {
-        horizontal: true,
-        dataLabels: {
-          position: 'top',
-        },
-      }
-    },
-    dataLabels: {
-      enabled: true,
-      offsetX: -6,
-      style: {
-        fontSize: '12px',
-        colors: ['#fff']
-      }
-    },
-    stroke: {
-      show: true,
-      width: 1,
+// Setup the chart options. Refer to the Apex Charts documentation for more details on how to use this:
+// https://apexcharts.com/docs
+var options = {
+  chart: {
+    height: 430,
+    type: 'bar',
+  },
+  plotOptions: {
+    bar: {
+      horizontal: true,
+      dataLabels: {
+        position: 'top',
+      },
+    }
+  },
+  dataLabels: {
+    enabled: true,
+    offsetX: -6,
+    style: {
+      fontSize: '12px',
       colors: ['#fff']
-    },
-    series: [
-        //{
-        //  name: "Team 1",
-        //  data: [3, 8]
-        //}
-    ],
-    xaxis: {
-      categories: [],
-    },
-  }
+    }
+  },
+  stroke: {
+    show: true,
+    width: 1,
+    colors: ['#fff']
+  },
+  series: [],
+  xaxis: {
+    categories: [],
+  },
+}
 
-
+// pollAPI is an async function that is used to poll the backend API's
+// service registry endpoint in order to populate the chart on the
+// document with data.
 var pollAPI = async function() {
+    // Get the API response using fetch. We use the document.location.href so that
+    // we don't need to hardcode the IP address or DNS name of this web page.
     const response = await fetch(document.location.href + "api/v1/service_registry");
+    // Get the response json.
     const myJson = await response.json();
 
+    // Kinds contains a uniq list of all the different types of services that
+    // have been registered for a team found in the response json.
     var kinds = new Set();
+    // Teams contains the data information for each team found in the response json.
     var teams = new Object();
 
+    // Iterate over the services key from the json response and extract the team name (the key)
+    // and the value, which contains an array of different objects that we can iterate over to
+    // extact the "kind" of service that is found.
     for (let [key, value] of Object.entries(myJson.services)) {
-        value.forEach(function(value) {
-            kinds.add(value.kind)
+        value.forEach(function(v) {
+          // Each value contains an array of objects. The kind can be extracted and added
+          // to the set of kinds that are being scored.
+          kinds.add(v.kind)
         })
+        // We use the team name from the services listing to intitialze the point values for each
+        // kind of service we found form this initial for loop in the next iteration. This allows
+        // us to ensure the right order in the apex char data series and xaxis labels.
         teams[key] = new Array();
     }
 
+    // Iterate over the teams object and append the point values for each kind of service from the json
+    // response in the proper order to be rendered on the chart.
     for (let [teamName, points] of Object.entries(teams)) {
         kinds.forEach(function(kind){
             myJson.services[teamName].forEach(function(service){
@@ -85,7 +100,8 @@ var pollAPI = async function() {
         })
     }
 
-    options.xaxis = Array.from(kinds);
+    // Use the information gathered to create a new series to update the
+    // chart with.
     var newSeries = new Array();
 
     for (let [teamName, points] of Object.entries(teams)) {
@@ -95,6 +111,7 @@ var pollAPI = async function() {
         })
     }
 
+    // Update the chart with the new seires and categories (in case any new kinds of services were found)
     return chart.updateOptions({
         xaxis: {
             categories: Array.from(kinds),
@@ -103,17 +120,21 @@ var pollAPI = async function() {
     }, false, true, true)
 }
 
+// Run the pollAPI function every 60 seconds.
 setInterval(function() {
     console.log("Polling API for information")
     pollAPI()
 }, 60 * 1000);
 
+// Setup the initial chart using the chart div in the document.
 var chart = new ApexCharts(
   document.querySelector("#chart"),
   options
 );
 
+// Run the pollAPI function on an initial page load.
 pollAPI()
 
+// Render the chart on an initial page load.
 chart.render();
 </script>
