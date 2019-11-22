@@ -30,6 +30,12 @@ team "team-1" {
     port     = 80
   }
 
+  service "mysql" {
+    protocol = "tcp"
+    ip       = "192.168.1.2"
+    port     = 3306
+  }
+
   service "ssh" {
     protocol = "tcp"
     ip       = "192.168.1.3"
@@ -40,6 +46,18 @@ team "team-1" {
     protocol = "tcp"
     ip       = "192.168.1.4"
     port     = 3389
+  }
+
+  service "ldap" {
+    protocol = "tcp"
+    ip       = "192.168.1.4"
+    port     = 389
+  }
+
+  service "mssql" {
+    protocol = "tcp"
+    ip       = "192.168.1.4"
+    port     = 1433
   }
 }
 
@@ -52,6 +70,12 @@ team "team-2" {
     port     = 80
   }
 
+  service "mysql" {
+    protocol = "tcp"
+    ip       = "192.168.2.2"
+    port     = 3306
+  }
+
   service "ssh" {
     protocol = "tcp"
     ip       = "192.168.2.3"
@@ -62,5 +86,17 @@ team "team-2" {
     protocol = "tcp"
     ip       = "192.168.2.4"
     port     = 3389
+  }
+
+  service "ldap" {
+    protocol = "tcp"
+    ip       = "192.168.2.4"
+    port     = 389
+  }
+
+  service "mssql" {
+    protocol = "tcp"
+    ip       = "192.168.2.4"
+    port     = 1433
   }
 }
