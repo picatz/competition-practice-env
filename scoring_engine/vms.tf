@@ -1,6 +1,6 @@
 resource "google_compute_instance" "engine" {
   name         = "engine"
-  machine_type = "n1-standard-4"
+  machine_type = "g1-small"
   zone         = "us-east1-b"
 
   boot_disk {
