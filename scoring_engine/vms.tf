@@ -6,7 +6,7 @@ resource "google_compute_instance" "engine" {
   boot_disk {
     initialize_params {
       image = "engine"
-      size  = 10
+      size  = 15
     }
   }
 
@@ -18,7 +18,7 @@ resource "google_compute_instance" "engine" {
     }
   }
 
-  tags = [ "http-server" ]
+  tags = ["http-server"]
 
   depends_on = ["null_resource.template"]
 }
