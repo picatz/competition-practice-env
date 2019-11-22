@@ -59,8 +59,8 @@ variable "vms" {
     },
     {
       name         = "windows"
-      image        = "centos-cloud/centos-7"
-      machine_type = "windows-cloud/windows-2016"
+      image        = "windows-cloud/windows-2016"
+      machine_type = "n1-standard-2"
       disk_size    = 50
       ip_addr      = ""
     },
