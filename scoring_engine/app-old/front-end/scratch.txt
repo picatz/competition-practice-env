@@ -1,0 +1,99 @@
+<template v-for="(item,index) in teamTotalPointValues">
+            <div v-if="item.teamName && item.totalPoints">
+              <li><a @click="openModal">{{item.teamName}}</a></li>
+              <div v-bind:id="item.teamName" class="modal">
+                <div class="modal-background"></div>
+                <div class="modal-card">
+                  <header class="modal-card-head">
+                    <button @click="closeModal" class="delete" aria-label="close"></button>
+                  </header>
+                  <section class="modal-card-body">
+                    <!-- Content ... -->
+                    <section class="hero">
+                      <div class="hero-body">
+                        <div class="container">
+                          <h1 class="title">
+                            <i class="fas fa-users"></i> {{item.teamName}}
+                          </h1>
+                          <h2 class="subtitle">
+                            <div class="tags has-addons" style="padding-top: 8px; margin-bottom: 0px;">
+                              <span class="tag is-light"><strong>Total Points</strong></span>
+                              <span class="tag is-dark">{{item.totalPoints}}</span>
+                            </div>
+                          </h2>
+                        </div>
+                      </div>
+                      <div class="table-container">
+                        <table class="table" style="width:100%">
+                          <tr>
+                            <th>Service</th>
+                            <th>Protocol</th>
+                            <th>IP</th>
+                            <th>Port</th>
+                            <th>Points</th>
+                          </tr>
+                          <div v-if="service_registry">
+
+                          <template v-for="(service) in service_registry.services[item.teamName]" >
+                            <tr>
+                              <td>{{service.kind}}</td>
+                              <td>{{service.protocol}}</td>
+                              <td>{{service.ip}}</td>
+                              <td>{{service.port}}</td>
+                              <td>{{service.points}}</td>
+                            </tr>
+                          </template>
+                          </div>
+                        </table>
+                      </div>
+                    </section>
+                  </section>
+                  <footer class="modal-card-foot">
+                  </footer>
+                </div>
+              </div>
+            </div>
+          </template>
+
+
+
+
+async setTotalPoints(jsonResponse) {
+        var newTeamTotalPointValues = new Array();
+
+        var totalPointsForAllTeams = 0;
+
+        for (let [teamName, teamServices] of Object.entries(jsonResponse.services)) {
+          var totalTeamPoints = 0;
+
+          teamServices.forEach(function(service) {
+            totalPointsForAllTeams = totalPointsForAllTeams + service.points
+            totalTeamPoints = totalTeamPoints + service.points
+          })
+
+          newTeamTotalPointValues.push({
+            teamName: teamName,
+            totalPoints: totalTeamPoints
+          })
+        }
+
+        this.totalPoints = totalPointsForAllTeams
+        this.teamTotalPointValues = newTeamTotalPointValues
+      }
+
+
+async fetchServiceRegistry() {
+        if (this.debugMode) {
+          console.log("Using debug mode fake service registry.")
+          return JSON.parse(`{"services":{"team-1":[{"kind":"http","ip":"192.168.1.2","port":80,"points":0,"protocol":"tcp"},{"kind":"mysql","ip":"192.168.1.2","port":3306,"points":0,"protocol":"tcp"},{"kind":"ssh","ip":"192.168.1.3","port":22,"points":44,"protocol":"tcp"},{"kind":"rdp","ip":"192.168.1.4","port":3389,"points":44,"protocol":"tcp"},{"kind":"ldap","ip":"192.168.1.4","port":389,"points":0,"protocol":"tcp"},{"kind":"mssql","ip":"192.168.1.4","port":1433,"points":0,"protocol":"tcp"}],"team-2":[{"kind":"http","ip":"192.168.2.2","port":80,"points":0,"protocol":"tcp"},{"kind":"mysql","ip":"192.168.2.2","port":3306,"points":0,"protocol":"tcp"},{"kind":"ssh","ip":"192.168.2.3","port":22,"points":44,"protocol":"tcp"},{"kind":"rdp","ip":"192.168.2.4","port":3389,"points":44,"protocol":"tcp"},{"kind":"ldap","ip":"192.168.2.4","port":389,"points":0,"protocol":"tcp"},{"kind":"mssql","ip":"192.168.2.4","port":1433,"points":0,"protocol":"tcp"}]}}`)
+        } else {
+          const response = await fetch(document.location.href + "api/v1/service_registry");
+          const jsonResponse = await response.json();
+
+          console.log(jsonResponse)
+
+          this.service_registry = jsonResponse;
+
+          return jsonResponse
+        }
+      },

@@ -309,7 +309,7 @@ func (sr *ServiceRegistry) Start() error {
 		}
 	}()
 
-	box := packr.NewBox("./front-end")
+	box := packr.NewBox("./public")
 
 	if sr.listener.IP != "" && sr.listener.Port != 0 {
 		mux := http.NewServeMux()
