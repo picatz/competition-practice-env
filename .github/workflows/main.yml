@@ -22,11 +22,14 @@ jobs:
         go get -u github.com/gobuffalo/packr/packr
         export PATH="/home/runner/go/bin:$PATH"
         which packr
-    - name: Use app directory
-      run: cd ./scoring_engine/app
     - name: Verify Modules
-      run: go mod verify
+      run: |
+        cd ./scoring_engine/app
+        go mod verify
     - name: Build Scoring Engine
       run: |
+        cd ./scoring_engine/app
         export PATH="/home/runner/go/bin:$PATH"
+        npm install
+        npm run build
         packr build -o scoring-engine -v .
