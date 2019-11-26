@@ -1,6 +1,6 @@
 
 data "local_file" "backend_app_source" {
-  filename = "app/front-end/index.html"
+  filename = "app/public/index.html"
 }
 
 data "local_file" "frontend_app_source" {
