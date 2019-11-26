@@ -17,6 +17,7 @@ jobs:
     - uses: actions/checkout@v1
     - name: Build Scoring Engine
       run: |
+        go get -u github.com/gobuffalo/packr/packr
         cd ./scoring_engine/app
-        go build -o scoring-engine -v .
         go mod verify
+        packr build -o scoring-engine -v .
