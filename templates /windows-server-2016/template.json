@@ -1,0 +1,96 @@
+{
+    "variables": {
+        "admin_password": "",
+        "gcp_project": "",
+        "gcp_zone": "us-east1-b"
+    },
+    "builders": [
+        {
+            "type": "googlecompute",
+            "name": "builder1",
+            "account_file": "../../team1/account.json",
+            "project_id": "{{user `gcp_project`}}",
+            "source_image": "windows-server-2016-dc-v20191112",
+            "image_description": "custom windows server 2016 image",
+            "image_name": "custom-windows-2016-server",
+            "disk_size": "50",
+            "machine_type": "n1-standard-4",
+            "state_timeout": "15m",
+            "communicator": "winrm",
+            "winrm_username": "packer_user",
+            "winrm_insecure": true,
+            "winrm_use_ssl": true,
+            "metadata": {
+                "windows-startup-script-cmd": "winrm quickconfig -quiet & net user /add packer_user & net localgroup administrators packer_user /add & winrm set winrm/config/service/auth @{Basic=\"true\"}"
+            },
+            "zone": "{{user `gcp_zone`}}"
+        }
+    ],
+    "provisioners": [
+        {
+            "type": "powershell",
+            "inline": [
+                "Write-Host 'Installing stackdriver agent'",
+                "cd C:\\Users\\$Env:Username",
+                "Invoke-WebRequest https://dl.google.com/cloudagents/windows/StackdriverLogging-v1-8.exe -OutFile StackdriverLogging-v1-8.exe;",
+                ".\\StackdriverLogging-v1-8.exe /S"
+            ]
+        },
+        {
+            "type": "powershell",
+            "inline": [
+                "Write-Host 'Renaming computer'",
+                "Rename-Computer -NewName 'SampleServer' -Force"
+            ]
+        },
+        {
+            "type": "windows-restart"
+        },
+        {
+            "type": "powershell",
+            "environment_vars": [
+                "PASSWORD={{user `admin_password`}}"
+            ],
+            "inline": [
+                "Write-Host 'Installing active directory domain services'",
+                "Install-WindowsFeature -Name AD-Domain-Services -IncludeManagementTools",
+                "Write-Host 'Installing AD DS Forest'",
+                "net user administrator '$Env:PASSWORD'",
+                "Install-ADDSForest -DomainName 'corp.picat.com.' -SafeModeAdministratorPassword (ConvertTo-SecureString '$Env:PASSWORD' -AsPlainText -Force) -NoRebootOnCompletion -Force"
+            ]
+        },
+        {
+            "type": "windows-restart"
+        },
+        {
+            "type": "powershell",
+            "inline": [
+                "Write-Host 'Installing and setting up DNS'",
+                "Install-WindowsFeature DNS -IncludeManagementTools",
+                "Add-DnsServerPrimaryZone -NetworkID 192.168.7.0/24 -ZoneFile '192.168.7.2.in-addr.arpa.dns'",
+                "Add-DnsServerForwarder -IPAddress 8.8.8.8 -PassThru",
+                "Test-DnsServer -IPAddress 192.168.7.2 -ZoneName 'corp.picat.com.'"
+            ]
+        },
+        {
+            "type": "powershell",
+            "inline": [
+                "Write-Host 'Installing chocolatey'",
+                "Set-ExecutionPolicy Bypass -Scope Process -Force; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))"
+            ]
+        },
+        {
+            "type": "powershell",
+            "inline": [
+                "Write-Host 'Installing google chrome'",
+                "choco install googlechrome -y"
+            ]
+        },
+        {
+            "type": "shell-local",
+            "inline": [
+                "echo '{{.WinRMPassword}}'"
+            ]
+        }
+    ]
+}
