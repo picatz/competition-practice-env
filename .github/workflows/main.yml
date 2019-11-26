@@ -20,8 +20,6 @@ jobs:
     - name: Install packr dependency
       run: |
         go get -u github.com/gobuffalo/packr/packr
-        export PATH="/home/runner/go/bin:$PATH"
-        which packr
     - name: Verify Modules
       run: |
         cd ./scoring_engine/app
