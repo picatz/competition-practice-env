@@ -1,4 +1,7 @@
 # competition-practice-env
+
+[![Open in Cloud Shell](https://gstatic.com/cloudssh/images/open-btn.svg)](https://ssh.cloud.google.com/cloudshell/editor?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fpicatz%2Fcompetition-practice-env)
+
 Read the wiki [here](https://github.com/picatz/competition-practice-env/wiki).
 
 <p align="center">
