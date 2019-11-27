@@ -2,10 +2,8 @@
 
 [![Actions Status](https://github.com/picatz/competition-practice-env/workflows/CI/badge.svg)](https://github.com/picatz/competition-practice-env/actions)
 
-<!--
-Uncomment this again once it actually works...
+<!-- Casey, plz help me, you're my only hope! -->
 [![Open in Cloud Shell](https://gstatic.com/cloudssh/images/open-btn.svg)](https://ssh.cloud.google.com/cloudshell/editor?cloudshell_git_repo=https%3A%2F%2Fgithub.com%2Fpicatz%2Fcompetition-practice-env&open_in_editor=README.md)
--->
 
 Read the wiki [here](https://github.com/picatz/competition-practice-env/wiki).
 
